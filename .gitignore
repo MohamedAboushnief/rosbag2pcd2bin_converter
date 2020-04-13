@@ -1,0 +1,4 @@
+build/
+pcd_files/*.pcd
+rosbags/*.bag
+bin_files/*.bin
