@@ -1,4 +1,8 @@
 build/
-pcd_files/*.pcd
+kitti_pcd_files/*.pcd
+velodyne_pcd_files/*.pcd
+ouster_pcd_files/*.pcd
 rosbags/*.bag
-bin_files/*.bin
+kitti_bin_files/*.bin
+ouster_bin_files/*.bin
+velodyne_bin_files/*.bin
