@@ -14,8 +14,7 @@
 
 using namespace std;
 
-//those 2 functions are for testing if the conversion is correct or not by converting the bin files to pcd again and visualize them with 
-// pcl_viewer. You can comment them if you want
+
 void readKittiPclBinData(const std::experimental::filesystem::v1::__cxx11::directory_entry& entry, std::string& out_file)
 {
     std::cout <<"Read :"<< entry.path().filename() << std::endl;
@@ -114,21 +113,27 @@ int main (int argc, char** argv){
     }
     
     // std::cout<<"Mean Intensity Value in PCD: "<< meanOfIntensity<<std::endl;
-    float maxIntensity = 100; // Approx the max value of the velodyne 
+    float maxIntensity = 200; // Approx the max value of the velodyne 
     FILE * stream; 
     stream = fopen (saveDataPathFile.c_str() ,"wb");
-
+    int errorCounter=0;
     float *it = data; // set pointer to data 
     for (std::size_t i = 0; i < cloud->points.size (); ++i){
-      *(it++) = cloud->points[i].x;
-      *(it++) = cloud->points[i].y;
-      *(it++) = cloud->points[i].z;
         float intensityApprox = cloud->points[i].intensity/meanOfIntensity*maxIntensity;
         intensityApprox= intensityApprox > maxIntensity ? maxIntensity:intensityApprox;
-      *(it++) =intensityApprox ;
+        if ((intensityApprox <=0)or (isnan(cloud->points[i].x ))){
+            errorCounter++;
+            continue;}
+
+        *(it++) = cloud->points[i].x;
+        *(it++) = cloud->points[i].y;
+        *(it++) = cloud->points[i].z;
+            
+        *(it++) =intensityApprox ;
     }
     fwrite(data,sizeof(float),n,stream);
     fclose(stream);
+    std::cout<<"Skipped "<<errorCounter<<" points "<<std::endl;
     delete [] data;  // When done, free memory pointed to by a.
     data = NULL;     // Clear a to prevent using invalid memory reference.
 
